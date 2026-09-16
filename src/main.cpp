@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <random>
+#include <sstream>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -34,6 +35,36 @@ namespace
         return display;
     }
 
+    std::string display_guessed(const std::unordered_set<char> &guessed)
+    {
+        std::vector<char> letters(guessed.begin(), guessed.end());
+        std::sort(letters.begin(), letters.end());
+        std::ostringstream display;
+        for (std::size_t index = 0; index < letters.size(); ++index)
+        {
+            if (index > 0)
+            {
+                display << ' ';
+            }
+            display << letters[index];
+        }
+        return display.str();
+    }
+
+    void render_game(const std::string &word, const std::unordered_set<char> &guessed, int misses)
+    {
+        const int misses_remaining = static_cast<int>(STAGES.size()) - 1 - misses;
+        std::cout << "\n+===============================================+\n"
+                  << "|                  H A N G M A N              |\n"
+                  << "+===============================================+\n"
+                  << STAGES[misses] << "\n\n"
+                  << "+-----------------------------------------------+\n"
+                  << "| Word:           " << display_word(word, guessed) << "\n"
+                  << "| Misses remaining: " << misses_remaining << "\n"
+                  << "| Guessed letters: " << (guessed.empty() ? "none" : display_guessed(guessed)) << "\n"
+                  << "+-----------------------------------------------+\n";
+    }
+
     bool solved(const std::string &word, const std::unordered_set<char> &guessed)
     {
         return std::all_of(word.begin(), word.end(), [&guessed](char letter)
@@ -45,7 +76,7 @@ namespace
         std::string input;
         while (true)
         {
-            std::cout << "Guess a letter: ";
+            std::cout << "\nEnter a letter [a-z] > ";
             if (!std::getline(std::cin, input))
             {
                 return '\0';
@@ -69,13 +100,10 @@ int main()
     std::unordered_set<char> guessed;
     int misses = 0;
 
-    std::cout << "Hangman\nGuess the word before the drawing is complete.\n";
+    std::cout << "\nWelcome to Hangman! Guess the word before the drawing is complete.\n";
     while (misses < static_cast<int>(STAGES.size()) - 1 && !solved(word, guessed))
     {
-        std::cout << '\n'
-                  << STAGES[misses] << "\n\n";
-        std::cout << "Word: " << display_word(word, guessed) << "\n";
-        std::cout << "Misses remaining: " << STAGES.size() - 1 - misses << "\n";
+        render_game(word, guessed, misses);
         const char guess = read_guess();
         if (guess == '\0')
         {
