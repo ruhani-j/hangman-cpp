@@ -58,7 +58,7 @@ namespace
         }
     }
 
-} // namespace
+}
 
 int main()
 {
