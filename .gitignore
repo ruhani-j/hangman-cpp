@@ -1,3 +1,11 @@
 build/
 *.exe
 .vscode/
+
+# AI assistant working files
+CLAUDE.md
+.claude/
+prompt*.md
+*-prompt.md
+claude-prompts/
+.github/copilot-instructions.md
